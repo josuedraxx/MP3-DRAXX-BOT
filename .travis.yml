@@ -1,0 +1,31 @@
+os: linux
+language: python
+
+python:
+- 3.6
+- 3.7
+- 3.8
+
+env:
+  - POETRY_VERSION=1.1.0a1
+
+install:
+  - pip freeze | xargs pip uninstall -y
+  - pip install --upgrade pip tox tox-travis
+  - curl -sSL "https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py" | python
+  - source "$HOME/.poetry/env"
+script: tox
+
+#after_success:
+#  # Send coverage to coveralls:
+#  - pip install coveralls
+#  - coveralls 
+
+deploy:
+  provider: script
+  script:
+    # POETRY_PYPI_TOKEN_PYPI is set in Travis CI environment variables
+    - poetry publish --build
+  on:
+    tags: true
+    python: 3.8
